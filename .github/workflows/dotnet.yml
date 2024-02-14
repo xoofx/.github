@@ -32,8 +32,12 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: 'xoofx/.github'
-        path: 'xoofx.github'
+        path: 'xoofx-github'
         ref: 'main'
+
+    - name: Print config file
+      run: |
+        cat xoofx-github/.github/workflows/nuget_org_only.config        
     
     - name: Checkout current repository
       uses: actions/checkout@v4
@@ -49,5 +53,5 @@ jobs:
     - name: Build, Test, Pack, Publish
       shell: bash
       run: |
-        dotnet tool install -g dotnet-releaser --configfile xoofx.github/.github/workflows/nuget_org_only.config
+        dotnet tool install -g dotnet-releaser --configfile xoofx-github/.github/workflows/nuget_org_only.config
         dotnet-releaser run --nuget-token "${{secrets.NUGET_TOKEN}}" --github-token "${{secrets.PAT_GITHUB_TOKEN || secrets.GITHUB_TOKEN}}" src/dotnet-releaser.toml
