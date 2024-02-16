@@ -25,7 +25,10 @@ env:
 
 jobs:
   build:
-    runs-on: ${{ fromJson(inputs.builds-on) }}
+    strategy:
+      matrix:
+        os: ${{ fromJson(inputs.builds-on) }}
+    runs-on: ${{ matrix.os }} 
 
     permissions:
       actions: write
