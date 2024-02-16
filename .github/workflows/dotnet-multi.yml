@@ -1,0 +1,92 @@
+on:
+  workflow_call:
+    inputs:
+      builds-on:
+        type: string
+        required: false
+        default: "['windows-latest', 'macos-latest']"
+      publish-on:
+        type: string
+        required: false
+        default: 'ubuntu-latest'
+      dotnet-version:
+        type: string
+        required: false
+        default: '8.0'
+
+    secrets:
+      NUGET_TOKEN:
+        required: true
+      PAT_GITHUB_TOKEN:
+        required: false
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+jobs:
+  build:
+    runs-on: ${{ fromJson(inputs.builds-on) }}
+
+    permissions:
+      actions: write
+      contents: write
+
+    steps:
+    - name: Checkout current repository
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+        fetch-depth: 0
+
+    - name: Checkout xoofx/.github
+      uses: actions/checkout@v4
+      with:
+        repository: 'xoofx/.github'
+        path: 'xoofx-github'
+        ref: 'main'
+        clean: false
+
+    - name: Install .NET ${{ inputs.dotnet-version }}
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '${{ inputs.dotnet-version }}.x'
+
+    - name: Build, Test, Pack
+      shell: bash
+      run: |
+        dotnet tool install -g dotnet-releaser --configfile xoofx-github/.github/workflows/nuget_org_only.config
+        dotnet-releaser build src/dotnet-releaser.toml
+
+  publish:
+    runs-on: ${{ inputs.publish-on }}
+    needs: build
+
+    permissions:
+      actions: write
+      contents: write
+
+    steps:
+    - name: Checkout current repository
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+        fetch-depth: 0
+
+    - name: Checkout xoofx/.github
+      uses: actions/checkout@v4
+      with:
+        repository: 'xoofx/.github'
+        path: 'xoofx-github'
+        ref: 'main'
+        clean: false
+
+    - name: Install .NET ${{ inputs.dotnet-version }}
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '${{ inputs.dotnet-version }}.x'
+
+    - name: Build, Test, Pack, Publish
+      shell: bash
+      run: |
+        dotnet tool install -g dotnet-releaser --configfile xoofx-github/.github/workflows/nuget_org_only.config
+        dotnet-releaser run --nuget-token "${{secrets.NUGET_TOKEN}}" --github-token "${{secrets.PAT_GITHUB_TOKEN || secrets.GITHUB_TOKEN}}" src/dotnet-releaser.toml
