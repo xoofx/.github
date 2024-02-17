@@ -45,7 +45,7 @@ jobs:
     - name: Install .NET ${{ inputs.dotnet-version }}
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '${{ inputs.dotnet-version }}.x'
+        dotnet-version: ${{ inputs.dotnet-version }}
 
     - name: Build, Test, Pack, Publish
       shell: bash
