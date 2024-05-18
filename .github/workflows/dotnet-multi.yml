@@ -13,6 +13,10 @@ on:
         type: string
         required: false
         default: '8.0'
+      dotnet-releaser-path:
+        type: string
+        required: false
+        default: 'src/dotnet-releaser.toml'
 
     secrets:
       NUGET_TOKEN:
@@ -58,7 +62,7 @@ jobs:
       shell: bash
       run: |
         dotnet tool install -g dotnet-releaser --configfile xoofx-github/.github/workflows/nuget_org_only.config
-        dotnet-releaser build src/dotnet-releaser.toml
+        dotnet-releaser build ${{ inputs.dotnet-releaser-path }}
 
   publish:
     runs-on: ${{ inputs.publish-on }}
@@ -93,4 +97,4 @@ jobs:
       shell: bash
       run: |
         dotnet tool install -g dotnet-releaser --configfile xoofx-github/.github/workflows/nuget_org_only.config
-        dotnet-releaser run --nuget-token "${{secrets.NUGET_TOKEN}}" --github-token "${{secrets.PAT_GITHUB_TOKEN || secrets.GITHUB_TOKEN}}" src/dotnet-releaser.toml
+        dotnet-releaser run --nuget-token "${{secrets.NUGET_TOKEN}}" --github-token "${{secrets.PAT_GITHUB_TOKEN || secrets.GITHUB_TOKEN}}" --github-token-gist "${{secrets.GIST_GITHUB_TOKEN || secrets.PAT_GITHUB_TOKEN || secrets.GITHUB_TOKEN}}" ${{ inputs.dotnet-releaser-path }}
