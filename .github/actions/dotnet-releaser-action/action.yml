@@ -49,4 +49,4 @@ runs:
     shell: bash
     run: |
       dotnet tool install -g dotnet-releaser --configfile xoofx-github/.github/workflows/nuget_org_only.config
-      dotnet-releaser run --nuget-token "${{secrets.NUGET_TOKEN}}" --github-token "${{secrets.PAT_GITHUB_TOKEN || secrets.GITHUB_TOKEN}}" --github-token-gist "${{secrets.GIST_GITHUB_TOKEN || secrets.PAT_GITHUB_TOKEN || secrets.GITHUB_TOKEN}}" ${{ inputs.dotnet-releaser-path }}
+      dotnet-releaser run --nuget-token "${{inputs.NUGET_TOKEN}}" --github-token "${{inputs.PAT_GITHUB_TOKEN || inputs.GITHUB_TOKEN}}" --github-token-gist "${{inputs.GIST_GITHUB_TOKEN || inputs.PAT_GITHUB_TOKEN || inputs.GITHUB_TOKEN}}" ${{ inputs.dotnet-releaser-path }}
