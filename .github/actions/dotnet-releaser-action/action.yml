@@ -2,28 +2,26 @@ name: "dotnet-releaser action"
 description: "Build, Test, Pack, Publish with dotnet-releaser"
 inputs:
   runs-on:
-    type: string
+    description: "The type of runner to use"
     required: false
     default: 'ubuntu-latest'
   dotnet-version:
-    type: string
+    description: "The version of the .NET SDK to use"
     required: false
     default: '8.0'
   dotnet-releaser-path:
-    type: string
+    description: "The path to the dotnet-releaser configuration file"
     required: false
     default: 'src/dotnet-releaser.toml'
-
-secrets:
   NUGET_TOKEN:
+    description: "The NuGet API key"
     required: true
   PAT_GITHUB_TOKEN:
+    description: "The GitHub Personal Access Token"
     required: false
   GIST_GITHUB_TOKEN:
+    description: "The GitHub Personal Access Token for Gist"
     required: false
-
-env:
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 
 runs:
   using: 'composite'
