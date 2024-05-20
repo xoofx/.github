@@ -1,10 +1,6 @@
 name: "dotnet-releaser action"
 description: "Build, Test, Pack, Publish with dotnet-releaser"
 inputs:
-  runs-on:
-    description: "The type of runner to use"
-    required: false
-    default: 'ubuntu-latest'
   dotnet-version:
     description: "The version of the .NET SDK to use"
     required: false
@@ -49,4 +45,4 @@ runs:
     shell: bash
     run: |
       dotnet tool install -g dotnet-releaser --configfile xoofx-github/.github/workflows/nuget_org_only.config
-      dotnet-releaser run --nuget-token "${{inputs.NUGET_TOKEN}}" --github-token "${{inputs.PAT_GITHUB_TOKEN || inputs.GITHUB_TOKEN}}" --github-token-gist "${{inputs.GIST_GITHUB_TOKEN || inputs.PAT_GITHUB_TOKEN || inputs.GITHUB_TOKEN}}" ${{ inputs.dotnet-releaser-path }}
+      dotnet-releaser run --nuget-token "${{inputs.NUGET_TOKEN}}" --github-token "${{inputs.PAT_GITHUB_TOKEN || github.token}}" --github-token-gist "${{inputs.GIST_GITHUB_TOKEN || inputs.PAT_GITHUB_TOKEN || github.token}}" ${{ inputs.dotnet-releaser-path }}
