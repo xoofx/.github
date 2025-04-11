@@ -11,6 +11,10 @@ inputs:
     description: "The path to the dotnet-releaser configuration file"
     required: false
     default: 'src/dotnet-releaser.toml'
+  checkout-repo:
+    description: "Allow to disable checking out the repo - in case it was already checked out"
+    required: false
+    default: 'true'
   NUGET_TOKEN:
     description: "The NuGet API key"
     required: true
@@ -26,6 +30,7 @@ runs:
   steps:
   - name: Checkout current repository
     uses: actions/checkout@v4
+    if: ${{ inputs.checkout-repo == 'true' }}
     with:
       submodules: true
       fetch-depth: 0
