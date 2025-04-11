@@ -12,7 +12,9 @@ on:
       dotnet-version:
         type: string
         required: false
-        default: '8.0'
+        default: |
+          8.0.x
+          9.0.x
       dotnet-releaser-path:
         type: string
         required: false
