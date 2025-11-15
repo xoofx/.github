@@ -7,6 +7,7 @@ inputs:
     default: |
       8.0.x
       9.0.x
+      10.0.x
   dotnet-releaser-path:
     description: "The path to the dotnet-releaser configuration file"
     required: false
@@ -29,14 +30,14 @@ runs:
   using: 'composite'
   steps:
   - name: Checkout current repository
-    uses: actions/checkout@v4
+    uses: actions/checkout@v5
     if: ${{ inputs.checkout-repo == 'true' }}
     with:
       submodules: true
       fetch-depth: 0
 
   - name: Checkout xoofx/.github
-    uses: actions/checkout@v4
+    uses: actions/checkout@v5
     with:
       repository: 'xoofx/.github'
       path: 'xoofx-github'
@@ -44,7 +45,7 @@ runs:
       clean: false
 
   - name: Install .NET ${{ inputs.dotnet-version }}
-    uses: actions/setup-dotnet@v4
+    uses: actions/setup-dotnet@v5
     with:
       dotnet-version: ${{ inputs.dotnet-version }}
 
