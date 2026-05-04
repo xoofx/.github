@@ -12,6 +12,10 @@ inputs:
     description: "The path to the dotnet-releaser configuration file"
     required: false
     default: 'src/dotnet-releaser.toml'
+  dotnet-releaser-version:
+    description: "The version of dotnet-releaser to install (use 'latest' for the latest version)"
+    required: false
+    default: 'latest'
   checkout-repo:
     description: "Allow to disable checking out the repo - in case it was already checked out"
     required: false
@@ -51,6 +55,12 @@ runs:
 
   - name: Build, Test, Pack, Publish
     shell: bash
+    env:
+      DOTNET_RELEASER_VERSION: ${{ inputs.dotnet-releaser-version }}
     run: |
-      dotnet tool install -g dotnet-releaser --configfile xoofx-github/.github/workflows/nuget_org_only.config
+      if [ -z "$DOTNET_RELEASER_VERSION" ] || [ "$DOTNET_RELEASER_VERSION" = "latest" ]; then
+        dotnet tool install -g dotnet-releaser --configfile xoofx-github/.github/workflows/nuget_org_only.config
+      else
+        dotnet tool install -g dotnet-releaser --version "$DOTNET_RELEASER_VERSION" --configfile xoofx-github/.github/workflows/nuget_org_only.config
+      fi
       dotnet-releaser run --nuget-token "${{inputs.NUGET_TOKEN}}" --github-token "${{inputs.PAT_GITHUB_TOKEN || github.token}}" --github-token-gist "${{inputs.GIST_GITHUB_TOKEN || inputs.PAT_GITHUB_TOKEN || github.token}}" ${{ inputs.dotnet-releaser-path }}
