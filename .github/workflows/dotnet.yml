@@ -19,7 +19,7 @@ on:
 
     secrets:
       NUGET_TOKEN:
-        required: true
+        required: false
       PAT_GITHUB_TOKEN:
         required: false
       GIST_GITHUB_TOKEN:
@@ -33,6 +33,7 @@ jobs:
     runs-on: ${{ inputs.runs-on }}
 
     permissions:
+      id-token: write
       actions: write
       contents: write
 
@@ -58,6 +59,17 @@ jobs:
 
     - name: Build, Test, Pack, Publish
       shell: bash
+      env:
+        NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
+        DOTNET_RELEASER_GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_TOKEN || github.token }}
+        DOTNET_RELEASER_GIST_TOKEN: ${{ secrets.GIST_GITHUB_TOKEN || secrets.PAT_GITHUB_TOKEN || github.token }}
       run: |
         dotnet tool install -g dotnet-releaser --configfile xoofx-github/.github/workflows/nuget_org_only.config
-        dotnet-releaser run --nuget-token "${{secrets.NUGET_TOKEN}}" --github-token "${{secrets.PAT_GITHUB_TOKEN || secrets.GITHUB_TOKEN}}" --github-token-gist "${{secrets.GIST_GITHUB_TOKEN || secrets.PAT_GITHUB_TOKEN || secrets.GITHUB_TOKEN}}" ${{ inputs.dotnet-releaser-path }}
+        args=(run)
+        if [ -n "${NUGET_TOKEN:-}" ]; then
+          args+=(--nuget-token "$NUGET_TOKEN")
+        fi
+        args+=(--github-token "$DOTNET_RELEASER_GITHUB_TOKEN")
+        args+=(--github-token-gist "$DOTNET_RELEASER_GIST_TOKEN")
+        args+=("${{ inputs.dotnet-releaser-path }}")
+        dotnet-releaser "${args[@]}"
